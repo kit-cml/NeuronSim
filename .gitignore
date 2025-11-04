@@ -1,0 +1,9 @@
+*.csv
+bin/neuronsim_Hodgkin-Huxley
+results/
+*.o
+*.log
+*.out
+*.dat
+*.swp
+*.pid
