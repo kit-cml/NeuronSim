@@ -36,6 +36,8 @@ int neuron_bench(const Parameter *p_param)
   const double stimulus_duration = p_param->stimulus_duration;
   const double stimulus_amplitude_scale = p_param->stimulus_amplitude_scale;
   const double gna_scale = p_param->gna_scale;
+  const double gk_scale = p_param->gk_scale;
+  const double gcl_scale = p_param->gcl_scale;
 
   if(time_step_min > writing_step){
     mpi_printf(cml::commons::MASTER_NODE,"%s\n%s\n",
@@ -60,8 +62,11 @@ int neuron_bench(const Parameter *p_param)
 
   p_cell = new hodgkin_huxley_squid_axon_model_1952();
   p_cell->initConsts();
-  
+
+  // apply user input conductance scale
   p_cell->CONSTANTS[g_Na] *= gna_scale;
+  p_cell->CONSTANTS[g_K] *= gk_scale;
+  p_cell->CONSTANTS[g_L] *= gcl_scale;
 
   // variables for I/O
   char buffer[255];

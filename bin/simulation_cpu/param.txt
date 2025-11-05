@@ -10,3 +10,5 @@ time_step_min = 0.1								// The minimum time step of the computation (msec). O
 time_step_max = 0.1								// The maximum time step of the computation (msec). Only for CVode solver.
 writing_step = 1.0								// The interval time to write the result into the file (msec).
 gna_scale = 1.										// The scaling factor of GNa conductance.
+gk_scale = 1.										// The scaling factor of GK conductance.
+gcl_scale = 1.										// The scaling factor of GCl conductance.

@@ -16,4 +16,6 @@ void show_param_logs(const Parameter *p_param)
   mpi_printf( 0, "%s -- %lf\n", "stimulus_duration", p_param->stimulus_duration);
   mpi_printf( 0, "%s -- %lf\n", "stimulus_amplitude_scale", p_param->stimulus_amplitude_scale);
   mpi_printf( 0, "%s -- %lf\n", "gna_scale", p_param->gna_scale);
+  mpi_printf( 0, "%s -- %lf\n", "gk_scale", p_param->gk_scale);
+  mpi_printf( 0, "%s -- %lf\n", "gcl_scale", p_param->gcl_scale);
 }
