@@ -63,6 +63,11 @@ int neuron_bench(const Parameter *p_param)
   p_cell = new hodgkin_huxley_squid_axon_model_1952();
   p_cell->initConsts();
 
+  // apply stimulus protocol from user input
+  p_cell->CONSTANTS[BCL] = cycle_length;
+  p_cell->CONSTANTS[duration] = stimulus_duration;
+  p_cell->CONSTANTS[amp] *= stimulus_amplitude_scale;
+
   // apply user input conductance scale
   p_cell->CONSTANTS[g_Na] *= gna_scale;
   p_cell->CONSTANTS[g_K] *= gk_scale;
