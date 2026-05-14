@@ -47,8 +47,8 @@ int neuron_bench(const Parameter *p_param)
   else if(number_pacing_write >= number_pacing){
     number_pacing_write = number_pacing;
     mpi_printf(cml::commons::MASTER_NODE,"%s\n%s\n",
-    "WARNING!!! The number_pacing_write is larger than the number_pacing",
-    "All period will be printed");
+    "WARNING!!! The number_pacing_write is equal to or larger than the number_pacing",
+    "All paces will be printed");
   }
 
   // this is the cellmodel initialization part
@@ -91,10 +91,16 @@ int neuron_bench(const Parameter *p_param)
     return 1;
   }
   
-  fprintf(fp_time_series,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-      "Time(ms)","Vm(mV)","dVm/dt(mV/ms)","i_Stim(mA_per_cm2)",
-      "i_Na(mA_per_cm2)","i_K(mA_per_cm2)","i_L(mA_per_cm2)",
-      "m","h","n");
+  static const char *time_series_headers[] = {
+    "Time(ms)", "Vm(mV)", "dVmdt(mV/ms)", "i_Stim(mA_per_cm2)",
+    "i_Na(mA_per_cm2)","i_K(mA_per_cm2)","i_L(mA_per_cm2)",
+    "m(INa-activation)", "h(INa-inactivation)", "n(IK-activation)"
+  };
+
+  size_t n_time_series_headers =
+    sizeof(time_series_headers) / sizeof(time_series_headers[0]);
+
+  write_csv_header(fp_time_series, time_series_headers, n_time_series_headers);
 
   double time_step = time_step_min;
   double tcurr = 0.;
@@ -160,13 +166,16 @@ int neuron_bench(const Parameter *p_param)
     if( tcurr >= next_output_time - cml::math::EPSILON ){
       // relative time since writing began
       tprint = next_output_time - start_time;
-      snprintf(buffer, sizeof(buffer),
-          "%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
-          p_cell->STATES[V], p_cell->RATES[V], p_cell->ALGEBRAIC[i_Stim],
-          p_cell->ALGEBRAIC[i_Na], p_cell->ALGEBRAIC[i_K], p_cell->ALGEBRAIC[i_L],
-          p_cell->STATES[m], p_cell->STATES[h], p_cell->STATES[n]);
 
-      fprintf(fp_time_series, "%.4lf,%s", tprint, buffer);
+      double row_values[] = {
+        tprint, p_cell->STATES[V],p_cell->RATES[V],p_cell->ALGEBRAIC[i_Stim],
+        p_cell->ALGEBRAIC[i_Na], p_cell->ALGEBRAIC[i_K], p_cell->ALGEBRAIC[i_L],
+        p_cell->STATES[m], p_cell->STATES[h], p_cell->STATES[n]
+      };
+
+      size_t n_row_values = sizeof(row_values) / sizeof(row_values[0]);
+      write_csv_time_series_row(fp_time_series, row_values, n_row_values);
+
       // schedule next output
       next_output_time += writing_step;
     }
